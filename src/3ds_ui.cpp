@@ -60,9 +60,13 @@ CtrUi::CtrUi(int width, int height) :
 		PF::NoAlpha);
 	Bitmap::SetFormat(Bitmap::ChooseFormat(format));
 	main_surface = Bitmap::Create(width, height, false, 32);
+	main_texture = sf2d_create_texture_mem_RGBA8(main_surface->pixels(),
+	                                             main_surface->GetWidth(), main_surface->GetHeight(), 
+	                                             TEXFMT_RGBA8, SF2D_PLACE_RAM);
 }
 
 CtrUi::~CtrUi() {
+	sf2d_free_texture(main_texture);
 	sf2d_fini();
 }
 
@@ -76,11 +80,6 @@ uint32_t CtrUi::GetTicks() const {
 	u64 usecs = (u64)(ticks/TICKS_PER_MSEC);
 	return usecs;
 }
-
-void CtrUi::Sleep(uint32_t time) {
-	//no-op
-}
-
 void CtrUi::BeginDisplayModeChange() {
 	// no-op
 }
@@ -124,14 +123,13 @@ void CtrUi::ProcessEvents() {
 
 void CtrUi::UpdateDisplay() {
 	// There's also sf2d_fill_texture, but it shows garbage after the second frame in citra.
-	main_texture = sf2d_create_texture_mem_RGBA8(main_surface->pixels(),
-	                                             main_surface->GetWidth(), main_surface->GetHeight(), 
-	                                             TEXFMT_RGBA8, SF2D_PLACE_RAM);
-
+	main_texture->tiled = 0;
+	sf2d_fill_texture_from_RGBA8(main_texture, main_surface->pixels(),
+	                                             main_surface->GetWidth(), main_surface->GetHeight()
+	                            );
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
 	sf2d_draw_texture(main_texture, 40, 0);
 	sf2d_end_frame();
-	sf2d_free_texture(main_texture);
 	sf2d_swapbuffers();
 }
 
