@@ -1,47 +1,69 @@
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
-
-# =========================
-# Operating System Files
-# =========================
-
-# OSX
-# =========================
-
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+/CMakeFiles/
+/autom4te.cache/
+/bin/
+/doc/
+/easyrpg-player-*/
+/lib/liblcf/
+/lib/TestGame/
+/lib/RTP/
+/.libs/
+.deps/
+CMakeCache.txt
+Makefile
+Makefile.in
+Testing/
+aclocal.m4
+config.h
+config.h.in
+config.status
+configure
+depcomp
+easyrpg_log.txt
+easyrpg-player
+easyrpg-player-*.tar.gz
+install-sh
+libtool
+libeasyrpg-player.la
+missing
+stamp-h1
+test-driver
+.dirstamp
+*.a
+*.elf
+/*.log
+/src/*.lo
+*.o
+/*.trs
+*~
+/resources/Doxyfile
+/resources/easyrpg-player.6
+/resources/player.aps
+/builds/archive
+/builds/autoconf/
+/builds/*/toolchain.cmake
+/builds/android/android
+/builds/android/local.properties
+/builds/android/assets/
+/builds/vs20*/Output/
+/builds/vs20*/*.*sdf
+/builds/vs20*/*.ncb
+/builds/vs20*/*.psess
+/builds/vs20*/*.suo
+/builds/vs20*/*.user
+/builds/vs20*/*.vsp*
+/builds/vs20*/.vs/
+/builds/vs20*/ipch/
+/builds/vs20*/x64/
+/builds/psp/PARAM.SFO
+/builds/psp/EBOOT.PBP
+/builds/wii/obj
+/builds/wii/*.dol
+/builds/3ds/build/filefinder
+/output
+/utils
+compile
+CPackConfig.cmake
+CPackSourceConfig.cmake
+CTestTestfile.cmake
+cmake_install.cmake
+liblcf.pc
