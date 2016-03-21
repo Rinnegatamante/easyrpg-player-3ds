@@ -96,7 +96,6 @@
 #endif
 
 #ifdef _3DS
-#  undef SUPPORT_AUDIO
 #  define NO_SDL_MIXER
 #  undef SUPPORT_ZOOM
 #endif
