@@ -32,17 +32,31 @@ u8 isN3DS;
 extern "C" int main(int argc, char* argv[]) {
 
 	#ifdef _3DS
+	
+	// Basic services init
 	gfxInitDefault();
 	hidInit();
+	aptOpenSession();
+	APT_SetAppCpuTimeLimit(30);
+	aptCloseSession();
+	
+	// Enable 804 Mhz mode if on N3DS
 	APT_CheckNew3DS(&isN3DS);
 	if(isN3DS)
 		osSetSpeedupEnable(true);
+		
 	#endif
+	
 	Player::Init(argc, argv);
 	Graphics::Init();
 	Input::Init();
 
 	Player::Run();
-
+	
+	#ifdef _3DS
+		hidExit();
+		gfxExit();
+	#endif
+	
 	return EXIT_SUCCESS;
 }
