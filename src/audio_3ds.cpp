@@ -151,11 +151,12 @@ void CtrAudio::SE_Play(std::string const& file, int volume, int /* pitch */) {
 	
 	// Opening and decoding the file (TODO)
 	bool isStereo = false;
+	int audiobuf_size;
 	
 	// Playing the sound (TODO)
 	float vol = volume / 100.0;
 	if (isStereo){
-	}else csndPlaySound(i, SOUND_LINEAR_INTERP | SOUND_FORMAT_16BIT, samplerate, vol, 0.0, (u32*)audiobuffers[i], (u32*)audiobuffers[i], 0);
+	}else csndPlaySound(i+0x08, SOUND_LINEAR_INTERP | SOUND_FORMAT_16BIT, samplerate, vol, 0.0, (u32*)audiobuffers[i], (u32*)audiobuffers[i], audiobuf_size);
 	
 }
 
@@ -163,6 +164,7 @@ void CtrAudio::SE_Stop() {
 	for(int i=0;i<num_channels;i++){
 		CSND_SetPlayState(i+0x08, 0);
 		if (audiobuffers[i] != NULL) linearFree(audiobuffers[i]);
+		audiobuffers[i] = NULL;
 	}
 	CSND_UpdateInfo(0);
 }
@@ -172,7 +174,10 @@ void CtrAudio::Update() {
 		if (audiobuffers[i] != NULL){
 			u8 isPlaying;
 			csndIsPlaying(i+0x08, &isPlaying);
-			if (!isPlaying) linearFree(audiobuffers[i]);
+			if (!isPlaying){
+				linearFree(audiobuffers[i]);
+				audiobuffers[i] = NULL;
+			}
 		}
 	}
 }
