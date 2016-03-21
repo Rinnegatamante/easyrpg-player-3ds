@@ -168,11 +168,16 @@ void CtrAudio::SE_Play(std::string const& file, int volume, int /* pitch */) {
 				Output::Warning("Cannot execute %s sound: audio-device is busy.\n",file.c_str());
 				return;
 			}
-		}
-		if (audiobuffers[z] != NULL) linearFree(audiobuffers[i]);
+		}		
+		if (audiobuffers[z] != NULL) linearFree(audiobuffers[z]);
+		
+		// To not waste CPU clocks, we use a single audiobuffer for both channels so we put just a stubbed audiobuffer on right channel
+		audiobuffers[z] = (u8*)linearAlloc(1);
+		
 		int chnbuf_size = audiobuf_size>>1;
 		csndPlaySound(i+0x08, SOUND_LINEAR_INTERP | SOUND_FORMAT_16BIT, samplerate, vol, -1.0, (u32*)audiobuffers[i], (u32*)audiobuffers[i], chnbuf_size); // Left
-		csndPlaySound(i+0x08, SOUND_LINEAR_INTERP | SOUND_FORMAT_16BIT, samplerate, vol, 1.0, (u32*)(audiobuffers[i] + chnbuf_size), ((u32*)audiobuffers[i] + chnbuf_size), chnbuf_size); // Right
+		csndPlaySound(z+0x08, SOUND_LINEAR_INTERP | SOUND_FORMAT_16BIT, samplerate, vol, 1.0, (u32*)(audiobuffers[i] + chnbuf_size), ((u32*)audiobuffers[i] + chnbuf_size), chnbuf_size); // Right
+		
 	}else csndPlaySound(i+0x08, SOUND_LINEAR_INTERP | SOUND_FORMAT_16BIT, samplerate, vol, 0.0, (u32*)audiobuffers[i], (u32*)audiobuffers[i], audiobuf_size);
 	
 }
