@@ -50,9 +50,8 @@ int DecodeOgg(FILE* stream, DecodedSound* Sound){
 	vorbis_info* my_info = ov_info(vf,-1);
 	Sound->samplerate = my_info->rate;
 	Sound->format = CSND_ENCODING_PCM16;
-	Sound->audiobuf_size = ov_time_total(vf,-1) * (my_info->rate<<1);
 	u16 audiotype = my_info->channels;
-	u16 bytepersample = audiotype<<1;
+	Sound->audiobuf_size = ov_pcm_total(vf,-1)<<audiotype;
 	if (audiotype == 2) Sound->isStereo = true;
 	else Sound->isStereo = false;
 	
@@ -74,7 +73,7 @@ int DecodeOgg(FILE* stream, DecodedSound* Sound){
 			
 			// Stub all the invalid entries due to offsets differences
 			int i = LAST_ENTRY + 1;
-			while (decodedtable[i].audiobuf < (Sound->audiobuf + Sound->audiobuf_size)){
+			while (Sound->audiobuf < (decodedtable[i].audiobuf + decodedtable[i].audiobuf_size)){
 				sprintf(soundtable[i],"%s","::::"); // A file with : in filename can't exist so we use that fake filename
 				i++;
 				if (i == ENTRIES) break;
@@ -101,7 +100,7 @@ int DecodeOgg(FILE* stream, DecodedSound* Sound){
 		
 		// Stub all the invalid entries due to offsets differences
 		int i = 1;
-		while (decodedtable[i].audiobuf < (Sound->audiobuf + Sound->audiobuf_size)){
+		while (Sound->audiobuf < (decodedtable[i].audiobuf + decodedtable[i].audiobuf_size)){
 			sprintf(soundtable[i],"%s","::::"); // A file with : in filename can't exist so we use that fake filename
 			i++;
 			if (i == ENTRIES) break;
@@ -123,21 +122,19 @@ int DecodeOgg(FILE* stream, DecodedSound* Sound){
 		}
 	}else{ // Stereo file
 		char pcmout[2048];
-		u16* pcmbuf = (u16*)pcmout;
+		int z = 0;
 		u32 chn_size = Sound->audiobuf_size>>1;
-		u16* left_channel = (u16*)Sound->audiobuf;
-		u16* right_channel = (u16*)&Sound->audiobuf[chn_size];
+		u8* left_channel = Sound->audiobuf;
+		u8* right_channel = &Sound->audiobuf[chn_size];
 		while(!eof){
 			long ret=ov_read(vf,pcmout,2048,0,2,1,&current_section);
 			if (ret == 0) eof=1;
 			else{
-				u32 sect_size = ret>>2;
-				u16 byteperchannel = 2;
-				for (u32 i=0;i<sect_size;i++){
-					left_channel[i] = pcmbuf[i];
-					right_channel[i] = pcmbuf[i];
+				for (u32 i=0;i<ret;i=i+4){
+					memcpy(&left_channel[z],&pcmout[i],2);
+					memcpy(&right_channel[z],&pcmout[i+2],2);
+					z = z + 2;
 				}
-				i = i + ret;
 			}
 		}
 	}
