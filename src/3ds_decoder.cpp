@@ -259,6 +259,7 @@ int OpenWav(FILE* stream, DecodedMusic* Sound){
 	return 0;
 }
 
+// TODO: In reality playedOnce should be set two blocks after EoF is detected
 void UpdateWavStream(DecodedMusic* Sound){	
 	Sound->block_idx++;	
 	u32 half_buf = Sound->audiobuf_size>>1;
