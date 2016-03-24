@@ -840,6 +840,21 @@ void Bitmap::Fill(const Color &color) {
 	RefreshCallback();
 }
 
+void Bitmap::FastFill(const Color &color) {
+   pixman_color_t pcolor = PixmanColor(color);
+   Rect src_rect(
+      0, 0, static_cast<uint16_t>(width()), static_cast<uint16_t>(height()));
+
+   pixman_image_create_solid_fill(&pcolor);
+
+   pixman_image_composite32(PIXMAN_OP_SRC,
+      bitmap, (pixman_image_t*)NULL, bitmap,
+      src_rect.x, src_rect.y,
+      0, 0,
+      0, 0,
+      src_rect.width, src_rect.height);
+}
+
 void Bitmap::FillRect(Rect const& dst_rect, const Color &color) {
 	pixman_color_t pcolor = PixmanColor(color);
 	pixman_rectangle16_t rect = {

@@ -95,5 +95,5 @@ void BaseUi::CleanDisplay() {
 }
 
 void BaseUi::AddBackground() {
-	main_surface->Fill(back_color);
+	main_surface->FastFill(back_color);
 }

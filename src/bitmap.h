@@ -348,7 +348,14 @@ public:
 	 * @param opacity opacity.
 	 */
 	void WaverBlit(int x, int y, double zoom_x, double zoom_y, Bitmap const& src, Rect const& src_rect, int depth, double phase, Opacity const& opacity);
-
+	
+	/**
+	 * Fills entire bitmap with color.
+	 *
+	 * @param color color for filling.
+	 */
+	void FastFill(const Color &color);
+	
 	/**
 	 * Fills entire bitmap with color.
 	 *

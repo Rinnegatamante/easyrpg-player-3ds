@@ -519,9 +519,12 @@ public:
 
 	static const bool aligned = ALIGNED;
 
+	#ifndef _3DS
 	static const int ONE = 255;
-	// static const int ONE = 256; // faster but less accurate
-
+	#else
+	static const int ONE = 256; // faster but less accurate
+	#endif
+	
 	typedef bits_traits<my_type, bits> bits_traits_type;
 	typedef dynamic_traits_t<DYNAMIC_MASKS,DYNAMIC_ALPHA,BITS,RB,RS,GB,GS,BB,BS,AB,AS,ALPHA> dynamic_traits_type;
 	typedef alpha_type_traits<my_type, dynamic_alpha, alpha> alpha_type_traits_type;
