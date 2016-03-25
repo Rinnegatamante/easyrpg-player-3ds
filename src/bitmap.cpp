@@ -38,6 +38,10 @@
 #include "bitmap_hslrgb.h"
 
 const Opacity Opacity::opaque;
+#ifdef _3DS
+#include <3ds.h>
+#include <sf2d.h>
+#endif
 
 BitmapRef Bitmap::Create(int width, int height, const Color& color) {
     BitmapRef surface = Bitmap::Create(width, height, false);
@@ -841,18 +845,22 @@ void Bitmap::Fill(const Color &color) {
 }
 
 void Bitmap::FastFill(const Color &color) {
-   pixman_color_t pcolor = PixmanColor(color);
-   Rect src_rect(
-      0, 0, static_cast<uint16_t>(width()), static_cast<uint16_t>(height()));
+	#ifndef _3DS
+	pixman_color_t pcolor = PixmanColor(color);
+	Rect src_rect(
+		0, 0, static_cast<uint16_t>(width()), static_cast<uint16_t>(height()));
 
-   pixman_image_create_solid_fill(&pcolor);
+	pixman_image_create_solid_fill(&pcolor);
 
-   pixman_image_composite32(PIXMAN_OP_SRC,
-      bitmap, (pixman_image_t*)NULL, bitmap,
-      src_rect.x, src_rect.y,
-      0, 0,
-      0, 0,
-      src_rect.width, src_rect.height);
+	pixman_image_composite32(PIXMAN_OP_SRC,
+		bitmap, (pixman_image_t*)NULL, bitmap,
+		src_rect.x, src_rect.y,
+		0, 0,
+		0, 0,
+		src_rect.width, src_rect.height);
+	#else
+	sf2d_set_clear_color(RGBA8(color.red, color.green, color.blue, color.alpha));
+	#endif
 }
 
 void Bitmap::FillRect(Rect const& dst_rect, const Color &color) {
