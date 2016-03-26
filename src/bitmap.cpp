@@ -845,7 +845,6 @@ void Bitmap::Fill(const Color &color) {
 }
 
 void Bitmap::FastFill(const Color &color) {
-	#ifndef _3DS
 	pixman_color_t pcolor = PixmanColor(color);
 	Rect src_rect(
 		0, 0, static_cast<uint16_t>(width()), static_cast<uint16_t>(height()));
@@ -858,9 +857,6 @@ void Bitmap::FastFill(const Color &color) {
 		0, 0,
 		0, 0,
 		src_rect.width, src_rect.height);
-	#else
-	sf2d_set_clear_color(RGBA8(color.red, color.green, color.blue, color.alpha));
-	#endif
 }
 
 void Bitmap::FillRect(Rect const& dst_rect, const Color &color) {
