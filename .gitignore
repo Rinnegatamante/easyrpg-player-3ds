@@ -1,5 +1,6 @@
 /CMakeFiles/
 /autom4te.cache/
+/build/
 /bin/
 /doc/
 /easyrpg-player-*/
@@ -9,7 +10,6 @@
 /.libs/
 .deps/
 CMakeCache.txt
-Makefile
 Makefile.in
 Testing/
 aclocal.m4
