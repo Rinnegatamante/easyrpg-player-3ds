@@ -178,7 +178,7 @@ CtrAudio::~CtrAudio() {
 }
 
 void CtrAudio::BGM_OnPlayedOnce() {
-
+	// Deprecated
 }
 
 void CtrAudio::BGM_Play(std::string const& file, int volume, int /* pitch */, int fadein) {
@@ -339,7 +339,7 @@ void CtrAudio::SE_Play(std::string const& file, int volume, int /* pitch */) {
 	// Select an available audio channel
 	int i = 0;
 	while (i < num_channels){
-		if (!isPlayingCallback(i)) break;
+		if (!isPlayingCallback(i+0x08)) break;
 		i++;
 		if (i >= num_channels){
 			Output::Warning("Cannot execute %s sound: audio-device is busy.\n",file.c_str());
@@ -447,7 +447,10 @@ void CtrAudio::SE_Stop() {
 		if (audiobuffers[i] != NULL) linearFree(audiobuffers[i]);
 		audiobuffers[i] = NULL;
 		#endif
-		if (isDSP) free(dspSounds[i]);
+		if (isDSP){
+			ndspChnWaveBufClear(i+0x08);
+			free(dspSounds[i]);
+		}
 	}
 	if (!isDSP) CSND_UpdateInfo(0);
 }
@@ -461,7 +464,10 @@ void CtrAudio::Update() {
 			if (!isPlayingCallback(i+0x08)){
 				linearFree(audiobuffers[i]);
 				audiobuffers[i] = NULL;
-				if (isDSP) free(dspSounds[i]);
+				if (isDSP){
+					ndspChnWaveBufClear(i+0x08);
+					free(dspSounds[i]);
+				}
 			}
 		}
 	}
