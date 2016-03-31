@@ -57,7 +57,7 @@ ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 LIBS	:= -lsf2d -lctru -llcf -licuuc -licui18n -licudata \
-			-lpixman-1 -lpng -lz -lfreetype  -lsvchax -lkhax \
+			-lpixman-1 -lpng -lz -lfreetype -lkhax \
 			-lvorbisidec -logg -lm
 
 
