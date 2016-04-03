@@ -354,13 +354,6 @@ public:
 	 *
 	 * @param color color for filling.
 	 */
-	void FastFill(const Color &color);
-	
-	/**
-	 * Fills entire bitmap with color.
-	 *
-	 * @param color color for filling.
-	 */
 	void Fill(const Color &color);
 
 	/**
