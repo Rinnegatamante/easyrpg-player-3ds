@@ -20,8 +20,8 @@
 
 // Headers
 #include <string>
-#include <list>
 #include <map>
+#include <vector>
 #include <cassert>
 #include <pixman.h>
 
@@ -182,16 +182,44 @@ public:
 	 */
 	void SetTransparentColor(Color color);
 
-	static const uint32_t System  = 0x80000000;
-	static const uint32_t Chipset = 0x40000000;
-
-	enum TileOpacity {
-		Opaque,
-		Partial,
-		Transparent
+	enum Flags {
+		// Special handling for system graphic.
+		Flag_System = 1 << 1,
+		// Special handling for chipset graphic.
+		// Generates a tile opacity list.
+		Flag_Chipset = 1 << 2,
+		// Bitmap will not be written to. This allows blit optimisations because the
+		// opacity information will not change.
+		Flag_ReadOnly = 1 << 16
 	};
 
-	TileOpacity GetTileOpacity(int row, int col);
+	enum TileOpacity {
+		// Image is full opaque and can be blitted fast
+ 		Opaque,
+		// Image has alpha and needs an alpha blit
+ 		Partial,
+		// Image is complately transparent
+ 		Transparent
+ 	};
+
+	/**
+	 * Provides opacity information about the image.
+	 * This influences the selected operator when blitting.
+	 *
+	 * @return opacity information
+	 */
+	TileOpacity GetOpacity() const;
+
+	/**
+	 * Provides opacity information about a tile on a tilemap.
+	 * This influences the selected operator when blitting a tile.
+	 *
+	 * @param row tile row
+	 * @param col tile col
+	 *
+	 * @return opacity information
+	 */
+	TileOpacity GetTileOpacity(int row, int col) const;
 
 	/**
 	 * Writes PNG converted bitmap to output stream.
@@ -207,7 +235,7 @@ public:
 	 *
 	 * @return background color.
 	 */
-	Color GetBackgroundColor();
+	Color GetBackgroundColor() const;
 
 	/**
 	 * Gets the shadow color
@@ -215,8 +243,10 @@ public:
 	 *
 	 * @return shadow color.
 	 */
-	Color GetShadowColor();
-
+	Color GetShadowColor() const;
+	
+	void CheckPixels(uint32_t flags);
+	
 protected:
 	Bitmap();
 
@@ -235,12 +265,10 @@ protected:
 
 	TileOpacity CheckOpacity(Rect const& rect);
 
-	void CheckPixels(uint32_t flags);
-
 	DynamicFormat format;
 
-	typedef EASYRPG_ARRAY<EASYRPG_ARRAY<TileOpacity, 30>, 16> opacity_type;
-	boost::scoped_ptr<opacity_type> opacity;
+	std::vector<std::vector<TileOpacity>> tile_opacity;
+	TileOpacity opacity = Partial;
 	Color bg_color, sh_color;
 
 	void InitBitmap();
@@ -269,6 +297,17 @@ public:
 	 */
 	void Blit(int x, int y, Bitmap const& src, Rect const& src_rect, Opacity const& opacity);
 
+	/**
+	 * Blits source bitmap to this one ignoring alpha (faster)
+	 *
+	 * @param x x position.
+	 * @param y y position.
+	 * @param src source bitmap.
+	 * @param src_rect source bitmap rect.
+	 * @param opacity opacity for blending with bitmap.
+	 */
+	void BlitFast(int x, int y, Bitmap const& src, Rect const& src_rect, Opacity const& opacity);
+	
 	/**
 	 * Blits source bitmap in tiles to this one.
 	 *
@@ -697,7 +736,7 @@ protected:
 	/** Bitmap data. */
 	pixman_image_t *bitmap;
 	pixman_format_code_t pixman_format;
-
+	
 	void Init(int width, int height, void* data, int pitch = 0, bool destroy = true);
 	void ConvertImage(int& width, int& height, void*& pixels, bool transparent);
 
@@ -724,6 +763,9 @@ protected:
 	static void initialize_formats();
 	static void add_pair(pixman_format_code_t pcode, const DynamicFormat& format);
 	static pixman_format_code_t find_format(const DynamicFormat& format);
+	
+	pixman_op_t GetOperator(pixman_image_t* mask = nullptr) const;
+	bool read_only = false;
 };
 
 #endif

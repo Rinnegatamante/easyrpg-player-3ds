@@ -110,7 +110,7 @@ void Scene::MainFunction() {
 
 		switch (push_pop_operation) {
 		case ScenePushed:
-			Graphics::Push();
+			Graphics::Push(Scene::instance->DrawBackground());
 			break;
 			// Graphics::Pop done in Player Loop
 		default:;
@@ -206,4 +206,8 @@ EASYRPG_SHARED_PTR<Scene> Scene::Find(SceneType type) {
 	}
 
 	return EASYRPG_SHARED_PTR<Scene>();
+}
+
+bool Scene::DrawBackground() {
+	return true;
 }
