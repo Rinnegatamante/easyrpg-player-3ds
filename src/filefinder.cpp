@@ -606,11 +606,8 @@ FileFinder::Directory FileFinder::GetDirectoryMembers(const std::string& path, F
 		return result;
 	}
 	
-#ifdef _3DS
-    sdmc_dir_t* sdmc_dir = (sdmc_dir_t*)dir->dirData->dirStruct;
-#endif
-	
 	static bool has_fast_dir_stat = true;
+	static bool is_directory;
 	
 	struct dirent* ent;
 	while ((ent = ::readdir(dir.get())) != NULL) {
@@ -621,10 +618,6 @@ FileFinder::Directory FileFinder::GetDirectoryMembers(const std::string& path, F
 #endif
 		if (name == "." || name == "..") { continue; }
 		
-#ifdef _3DS
-        // ctrulib does not populate the d_type field
-        bool is_directory = sdmc_dir->entry_data.attributes & FS_ATTRIBUTE_DIRECTORY;
-#else
 		if (has_fast_dir_stat) {
 			is_directory = ent->d_type == DT_DIR;
 		} else {
@@ -640,7 +633,6 @@ FileFinder::Directory FileFinder::GetDirectoryMembers(const std::string& path, F
 	
 			continue;
 		}
-#endif
 		
 		switch(m) {
 		case FILES:
