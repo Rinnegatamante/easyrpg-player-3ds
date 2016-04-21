@@ -6,8 +6,6 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
-NO_SMDH=1
-
 TOPDIR ?= $(CURDIR)
 include $(DEVKITARM)/3ds_rules
 
@@ -38,8 +36,9 @@ SOURCES		:=	src lib/shinonome
 DATA		:=	data
 INCLUDES	:=	src lib lib/shinonome
 
-APP_TITLE   := EasyRPG-Player
-
+APP_TITLE   := EasyRPG Player
+APP_DESCRIPTION	:= RPG Maker 2000/2003 interpreter
+APP_AUTHOR	:= EasyRPG Team
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -49,7 +48,7 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-fomit-frame-pointer -ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -DPIXMAN_NO_TLS -DSUPPORT_AUDIO -DUSE_CACHE
+CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -DPIXMAN_NO_TLS -DSUPPORT_AUDIO -DUSE_CACHE -DNO_DEBUG
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
