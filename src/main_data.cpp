@@ -42,6 +42,7 @@
 	#include <3ds.h>
 	#include "output.h"
 	#include <stdio.h>
+	extern char mainDir[];
 #endif
 
 // Global variables.
@@ -84,7 +85,7 @@ void Main_Data::Init() {
 		Output::Debug("Detected a project on romFs filesystem...");
 		fclose(testfile);
 		project_path = "romfs:";
-		save_path = "sdmc:/";
+		save_path = mainDir;
 	}else 
 	#endif
 	project_path = ".";
